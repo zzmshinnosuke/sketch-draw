@@ -7,11 +7,11 @@ return [
 	'site_title'			=>	'ISCAS',
 	'site_desc'				=>	'sketch',
 	'view_replace_str'  =>  [
-		'__PUBLIC__'		=>	'/skeimg/public',
-		'__CSS__'			=>	'/skeimg/public/css',
-		'__JS__'			=>	'/skeimg/public/js',
-		'__ROOT__'			=>	'/skeimg/',
-		'__APP__'			=>	'/skeimg/',
+		'__PUBLIC__'		=>	'/skeimg1/public',
+		'__CSS__'			=>	'/skeimg1/public/css',
+		'__JS__'			=>	'/skeimg1/public/js',
+		'__ROOT__'			=>	'/skeimg1/',
+		'__APP__'			=>	'/skeimg1/',
 		'__FOLDER__'		=>	'tu',
 	],
 
@@ -19,7 +19,7 @@ return [
     // | Configuration
     // +----------------------------------------------------------------------
     'app_password'           => 'admin',
-    'total_tasks'            => 3107,
+    // 'total_tasks'            => 4346,
     'app_namespace'          => 'app',
     'app_debug'              => false,
     'app_trace'              => false,

@@ -21,7 +21,6 @@ var sketch = function( p ) {
     var next_btn;
 
     var no_standard_input;
-    var no_standard_btn;
 
     var img;
 
@@ -29,7 +28,6 @@ var sketch = function( p ) {
 
         screen_width=Math.max(window.innerWidth,480);
         screen_height=Math.max(window.innerHeight,320);
-
 
         draw_area_x=parseInt(screen_width/3);
         draw_area_y=0;
@@ -63,19 +61,9 @@ var sketch = function( p ) {
         next_btn=p.createButton('next');
         next_btn.position(80,5);
         next_btn.style('width',50+'px');
-        next_btn.mouseClicked(next_button_event);
-
-        // no_standard_btn=p.createButton('no_standard');
-        // no_standard_btn.position(140,5);
-        // no_standard_btn.style('width',100+'px');
-        // no_standard_btn.mouseClicked(no_standard_button_event);
-
-        // no_standard_input=p.createInput();
-        // no_standard_input.position(250,5);
-        // no_standard_input.style('width',200+'px');      
+        next_btn.mouseClicked(next_button_event);     
 
     }
-
 
     p.preload=function(){
         //var list = JSON.parse(Apollo.contents);
@@ -113,7 +101,6 @@ var sketch = function( p ) {
 
     //从保存的笔画数组中绘制所有的笔画在画板上
     var draw_example = function(example) {
-
         for(var i=0;i<example.length;i++) {
             // sample the next pen's states from our probability distribution
             var temp_stroke = example[i];
@@ -133,19 +120,28 @@ var sketch = function( p ) {
         Apollo.suffix = d.toLocaleDateString().toString().replace('/', "_").replace('/', "_")  + "_" + d.toLocaleTimeString().replace(":", "_").replace(":", "_").replace(" ", "");
         var imgCanvas = document.getElementById('defaultCanvas0'); // get the canvas created by p5js
         var device=[img.width,img.height];
+        var result=JSON.stringify({"filename":Apollo.contents['filename'],"device":device,"strokes":strokes});
+        var md5_verify=md5(result);
         var postData = {
             task: Apollo.task,
             save: 2,
             suffix: Apollo.suffix,
-            json: JSON.stringify({"filename":Apollo.contents['filename'],"device":device,"strokes":strokes}),
-            // img_val: imgCanvas.toDataURL("image/png"),
+            md5: md5_verify,
+            json: result,
         };
         $.ajax({
             type: "POST",
             url: Apollo.baseUrl,
             data: postData,
             success: function (data, status, jqXHR) {
-                alert("success");
+                if(md5_verify==data)
+                {
+                    alert("SUCCESS!");
+                }
+                else{
+                    alert("Please Save Again!");
+                }
+                
             },
             error: function (data, status, jqXHR) {
                 alert("false");

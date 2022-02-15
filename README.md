@@ -1,31 +1,21 @@
-# SceneSynthesis
-A web-driven tool to for scene synthesis with separate sketch objects.
-Demo at http://localhost:8080/create/?task=1
-
-## Dependencies
-* ThinkPHP 5.0 (PHP web framework)
-    * Please clone the framework from Github:
-```bash
-    git clone https://github.com/top-think/framework thinkphp
-```
+# SketchImg
+Scene sketch drawing tool, draw sketches with pictures, save the sketches in vector format
 
 ## Environments
-* Apache + PHP + MySQL + Python
-* Install the latest [XAMPP](https://www.apachefriends.org/index.html)
-* We suggest you git clone this repository as a folder called *create*
+* ThinkPhp 5.0
+* PHP + Js
+* [XAMPP](https://www.apachefriends.org/index.html)
 
 ## Acknowledgement for ThirdParty libraries
 * [jQuery](https://jquery.com/)
 * [jQuery UI](https://jqueryui.com/)
 * [jquery.ui.rotatable](https://github.com/godswearhats/jquery-ui-rotatable)
 * [jQuery Simulate](https://github.com/jquery/jquery-simulate)
-* [Mousetrap.js](https://craig.is/killing/mice)
-* [HTML2Canvas](https://github.com/niklasvh/html2canvas)
-* [Hermite-resize](https://github.com/viliusle/Hermite-resize)
-* [SignaturePad](https://github.com/szimek/signature_pad)
-* [MersenneTwister](https://github.com/pigulla/mersennetwister)
+* [p5.js](https://p5js.org/)
+* [md5](https://github.com/blueimp/JavaScript-MD5)
+* [sketch_rnn](https://magenta.tensorflow.org/sketch-rnn-demo)
 
-## 运行说明
+## Run
 1. linux系统安装xampp
 2. 将系统目录整个拷贝到/htdocs目录下
 3. 配置文件 ./public/images/background.txt (第一行 文件总数，后面每行一个图片名)
@@ -43,7 +33,7 @@ Demo at http://localhost:8080/create/?task=1
 后来发现尽管注释掉了，结果后面的{$reference}框架还是再起作用，注释掉也没用
 
 
-# skepad
+# Log
 ## 20200513
 该程序专门用来绘制草图，功能从简，只保留画板的基本功能。可用来平板等小屏幕设备上显示。
 
@@ -61,3 +51,9 @@ Demo at http://localhost:8080/create/?task=1
 
 ## 20200813
 修改了橡皮檫功能，解决了有些笔画删除不掉的问题。
+
+## 20201124
+添加了md5字符串验证，保证传输过程的正确性。
+
+## 20201227
+将php中md5值接收方式改成字符串

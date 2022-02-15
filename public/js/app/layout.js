@@ -511,11 +511,15 @@ var sketch = function( p ) {
             }      
             strokes_image.push(current_stroke_image);
         } 
+        var result=JSON.stringify({"filename":Apollo.reference,"device":device,"origin":strokes,"new":strokes_image});
+        var md5_verify=md5(result);
+        // alert(md5_verify);
         var postData = {
             task: Apollo.task,
             save: 1,
             suffix: Apollo.suffix,
-            json: JSON.stringify({"filename":Apollo.reference,"device":device,"origin":strokes,"new":strokes_image}),
+            md5: md5_verify,
+            json: result,         
             // img_val: imgCanvas.toDataURL("image/png"),
         };
         $.ajax({
@@ -523,7 +527,13 @@ var sketch = function( p ) {
             url: Apollo.baseUrl,
             data: postData,
             success: function (data, status, jqXHR) {
-                alert("success");
+                // alert(data);
+                if(data==md5_verify){
+                    alert("SUCCESS!");
+                }             
+                else{
+                    alert("Please Save Again!");
+                }
             },
             error: function (data, status, jqXHR) {
                 alert("false");

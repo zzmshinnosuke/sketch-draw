@@ -5,3 +5,9 @@ results2/*
 runtime/log/*
 runtime/temp/*
 public/images/*
+
+.ipynb_checkpoints/*
+*/.ipynb_checkpoints/*
+*/*/*/.ipynb_checkpoints/*
+*/*/*/*/.ipynb_checkpoints/*
+

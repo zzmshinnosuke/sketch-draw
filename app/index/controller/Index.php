@@ -5,26 +5,29 @@ use think\Db;
 
 class Index
 {
-	
 	private function save_image($folder)
 	{			
 		try
 		{
 			$task = input('param.task/d', 0);
 			$suffix = input('param.suffix/s', "");
-			
+			$verify_md5= input('param.md5/s', 0);
+			$md5_cal="";
 			if ($folder === 1||$folder === 2) {
 				$json = input('param.json/s', "");
+				$md5_cal=md5($json);
+				if ($md5_cal!=$verify_md5) {
+					echo 0;
+					return;
+				}
 				$file = fopen('backup' . $folder . '/'. $task . '_' . $suffix . '.json', "w");
 				fwrite($file, $json);
 				fclose($file);
 				$file = fopen('results' . $folder . '/'. $task . '.json', "w");
 				fwrite($file, $json);
 				fclose($file);
-			}
-
-			
-			echo 1;	
+			}	
+			echo $md5_cal;	
 		} catch (\Exception $e) {
 			echo 0;
 		}
@@ -91,7 +94,12 @@ class Index
 		} 
 		$start = input('param.start/d', 1);
 		if ($start < 1) $start = 1; 
-		$N = config("total_tasks");
+        
+		// $N = config("total_tasks");
+        $file = fopen("public/images/background_box.txt", "r") or die("Unable to open file!");
+		$N = (int)fgets($file);
+		fclose($file);
+        
 		$end = input('param.end/d', $N);
 		if ($end > $N) $end = $N; 
 		
