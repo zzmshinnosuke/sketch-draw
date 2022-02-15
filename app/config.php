@@ -7,11 +7,11 @@ return [
 	'site_title'			=>	'ISCAS',
 	'site_desc'				=>	'sketch',
 	'view_replace_str'  =>  [
-		'__PUBLIC__'		=>	'/skeimg1/public',
-		'__CSS__'			=>	'/skeimg1/public/css',
-		'__JS__'			=>	'/skeimg1/public/js',
-		'__ROOT__'			=>	'/skeimg1/',
-		'__APP__'			=>	'/skeimg1/',
+		'__PUBLIC__'		=>	'/sketch-draw/public',
+		'__CSS__'			=>	'/sketch-draw/public/css',
+		'__JS__'			=>	'/sketch-draw/public/js',
+		'__ROOT__'			=>	'/sketch-draw/',
+		'__APP__'			=>	'/sketch-draw/',
 		'__FOLDER__'		=>	'tu',
 	],
 
