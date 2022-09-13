@@ -15,13 +15,12 @@ function stroke_draw() {
 }
 var sketch = function( p ) {
  
+    var screen_width, screen_height; //屏幕的宽和高
 
-    var screen_width,screen_height; //屏幕的宽和高
-
-    var start_x,start_y; //绘制起始位置坐标
-    var draw_area_x,draw_area_y,draw_area_width,draw_area_height;//绘制区域左上角坐标
-    var image_x,image_y,image_width,image_height;//图片区域
-    var operate_x,operate_y;
+    var start_x, start_y; //绘制起始位置坐标
+    var draw_area_x, draw_area_y, draw_area_width, draw_area_height; //绘制区域左上角坐标
+    var image_x, image_y, image_width, image_height; //图片区域
+    var operate_x, operate_y;
 
     var has_started=false; //set to true after user starts writing
     var just_finished_line = false; //
@@ -29,6 +28,8 @@ var sketch = function( p ) {
     var current_stroke=null;
     var strokes=[];
     var current_raw_line=[]; //save user drawing line
+    var scene = "field";
+    var drawer = -1;
 
     var pen = 0; //当前笔的状态，1抬笔，0落笔
     var pre_pen = 1;//前一笔的状态，1抬笔，0落笔
@@ -81,27 +82,32 @@ var sketch = function( p ) {
         if(img.width/img.height>d_width/d_height)
         {
             draw_area_width=d_width;
-            draw_area_height=parseInt(d_width*img.height/img.width);
+            draw_area_height=d_width*img.height/img.width;
+            ratio=(img.width+0.0)/draw_area_width;
         }
         else
         {
             draw_area_height=d_height;
-            draw_area_width=parseInt(d_height*img.width/img.height);
-        }
-        ratio=(img.width+0.0)/draw_area_width;
+            draw_area_width=d_height*img.width/img.height;
+            ratio=(img.height+0.0)/draw_area_height;
+        } 
+        
+        //参考图像的起始坐标
         image_x=0;
         image_y=230;
+        
+        //参考图像的缩放
         var d_width=draw_area_x;
         var d_height=screen_height-300;
         if(img.width/img.height>d_width/d_height)
         {
             image_width=d_width;
-            image_height=parseInt(d_width*img.height/img.width);
+            image_height=d_width*img.height/img.width;
         }
         else
         {
             image_height=d_height;
-            image_width=parseInt(d_height*img.width/img.height);
+            image_width=d_height*img.width/img.height;
         }
 
         canvas=p.createCanvas(screen_width,screen_height);
@@ -119,8 +125,8 @@ var sketch = function( p ) {
         p.frameRate(120);
         p.background(255,255,255,255);
 
-        var scene=p.createP("Scene  "+ Apollo.task);
-        scene.position(5,0);
+        var Scene1=p.createP("Scene  "+ Apollo.task);
+        Scene1.position(5,0);
 
         save_btn=p.createButton('save');
         save_btn.position(5,operate_y+20);
@@ -198,11 +204,13 @@ var sketch = function( p ) {
                 if (data === "0")
                     return;
                 var list = JSON.parse(data);
+                scene = list["scene"];
+                drawer = list["drawer"];
                 if (list.length == 0)
                     return;
-                for(var i=0;i<list['new'].length;i++)
+                for(var i=0;i<list['strokes'].length;i++)
                 {
-                    var temp=list['new'][i];
+                    var temp=list['strokes'][i];
                     var points=[];
                     current_stroke=new stroke_draw();
                     for(var j=0;j<temp['points'].length;j++)
@@ -353,9 +361,7 @@ var sketch = function( p ) {
     };
 
     var draw_user_strokes = function(x, y, dx, dy) {
-
         // draw on large main screen
-
         p.strokeWeight(thickness_user); // nice thick line
         p.stroke(raw_line_color);
         p.line(x, y, x+dx, y+dy); // draw line connecting prev point to current point.
@@ -384,6 +390,8 @@ var sketch = function( p ) {
     }
 
     var eraser_stroke=function(){
+        // 判断删除位置与每一条笔画是否靠近，删除位置在笔画的位置，如果是两端可以直接擦除，如果是中间会生成新的笔画。
+        // 所以如果中间被截断的话，产生两条笔画，还是在相同的位置，会改变后面笔画的位置。
         var new_strokes=[];
         for(var i=0;i<strokes.length;i++)
         {
@@ -455,7 +463,6 @@ var sketch = function( p ) {
                 p.line(image_x+image_width*i/(guide_nums+1),image_y,image_x+image_width*i/(guide_nums+1),image_y+image_height);
                 p.line(image_x,image_y+image_height*i/(guide_nums+1),image_x+image_width,image_y+image_height*i/(guide_nums+1));
 
-
                 p.line(draw_area_x+draw_area_width*i/(guide_nums+1),draw_area_y,draw_area_x+draw_area_width*i/(guide_nums+1),draw_area_y+draw_area_height);
                 p.line(draw_area_x,draw_area_y+draw_area_height*i/(guide_nums+1),draw_area_x+draw_area_width,draw_area_y+draw_area_height*i/(guide_nums+1));
             }
@@ -497,8 +504,9 @@ var sketch = function( p ) {
         var d = new Date();
         Apollo.suffix = d.toLocaleDateString().toString().replace('/', "_").replace('/', "_")  + "_" + d.toLocaleTimeString().replace(":", "_").replace(":", "_").replace(" ", "");
         var imgCanvas = document.getElementById('defaultCanvas0'); // get the canvas created by p5js
-        var device=[screen_width,screen_height,draw_area_x,draw_area_y,draw_area_width,draw_area_height,img.width,img.height];
-        var strokes_image=[];
+        var device=[screen_width,screen_height,draw_area_x,draw_area_y,draw_area_width,draw_area_height];
+        var resolution=[img.width,img.height];
+        var new_strokes=[];
         for(var i=0;i<strokes.length;i++)
         {
             var temp=strokes[i];
@@ -509,9 +517,9 @@ var sketch = function( p ) {
             {
                 current_stroke_image.points.push([(temp.points[j][0]-draw_area_x)*ratio,(temp.points[j][1]-draw_area_y)*ratio]);
             }      
-            strokes_image.push(current_stroke_image);
+            new_strokes.push(current_stroke_image);
         } 
-        var result=JSON.stringify({"filename":Apollo.reference,"device":device,"origin":strokes,"new":strokes_image});
+        var result=JSON.stringify({"reference":Apollo.reference, "device":device, "resolution":resolution, "scene":scene, "drawer":drawer, "origin_strokes":strokes, "strokes":new_strokes });
         var md5_verify=md5(result);
         // alert(md5_verify);
         var postData = {
